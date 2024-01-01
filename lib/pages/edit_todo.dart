@@ -188,7 +188,7 @@ AppBar appBar() {
         fontWeight: FontWeight.bold,
       ),
     ),
-    backgroundColor: const Color.fromARGB(206, 122, 217, 255),
+    backgroundColor: Color.fromARGB(244, 77, 179, 163),
     centerTitle: true,
   );
 }

@@ -2,12 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class AddNotes extends StatefulWidget {
+class AddNotesNotes extends StatefulWidget {
   @override
-  _AddNotesState createState() => _AddNotesState();
+  _AddNotesNotesState createState() => _AddNotesNotesState();
 }
 
-class _AddNotesState extends State<AddNotes> {
+class _AddNotesNotesState extends State<AddNotesNotes> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
@@ -16,13 +16,13 @@ class _AddNotesState extends State<AddNotes> {
     return Scaffold(
       appBar: appBar(),
       body: Container(
-        color: Color.fromARGB(255, 255, 240, 179),
+        color: Color.fromARGB(255, 207, 242, 255),
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Create a New To-Do",
+              "Create a New Notes",
               style: TextStyle(
                 fontSize: 12.0,
                 fontWeight: FontWeight.bold,
@@ -37,7 +37,7 @@ class _AddNotesState extends State<AddNotes> {
               controller: _titleController,
               decoration: const InputDecoration(
                 border: UnderlineInputBorder(),
-                labelText: 'Your To-Do Title',
+                labelText: 'Your Note Title',
                 labelStyle: TextStyle(
                   fontSize: 12,
                 ),
@@ -56,8 +56,8 @@ class _AddNotesState extends State<AddNotes> {
                   ),
                   contentPadding: EdgeInsets.symmetric(vertical: 16.0),
                   labelStyle: TextStyle(fontSize: 12)),
-              minLines: 1,
-              maxLines: 4,
+              minLines: 6,
+              maxLines: 6,
             ),
             SizedBox(height: 16.0),
             Padding(
@@ -80,7 +80,7 @@ class _AddNotesState extends State<AddNotes> {
                       );
                     } else {
                       Fluttertoast.showToast(
-                        msg: 'Please Provide To-Do Title',
+                        msg: 'Please Provide Note Title',
                         toastLength: Toast.LENGTH_SHORT,
                         gravity: ToastGravity.BOTTOM,
                         timeInSecForIosWeb: 1,
@@ -112,7 +112,7 @@ class _AddNotesState extends State<AddNotes> {
 AppBar appBar() {
   return AppBar(
     title: const Text(
-      'Add New To-Do',
+      'Add New Note',
       style: TextStyle(
         color: Color.fromARGB(255, 70, 70, 70),
         fontSize: 18,

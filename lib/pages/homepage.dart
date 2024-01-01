@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:todoapp1/pages/edit_todo.dart';
+import 'package:todoapp1/pages/notes.dart';
 import 'package:todoapp1/pages/view_todo.dart';
 import 'add_todo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,13 +35,16 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     var ListBgColor = const Color.fromARGB(255, 109, 189, 255);
-
+    final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
+        if (_scaffoldKey.currentState!.isDrawerOpen) {
+          Navigator.of(context).pop();
+        }
       },
       child: Scaffold(
-        appBar: appBar(),
+        appBar: appBar(context),
         body: Column(
           children: [
             Container(
@@ -238,6 +242,7 @@ class _HomeState extends State<Home> {
             )
           ],
         ),
+        drawer: buildDrawer(context),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             final result = await Navigator.push(
@@ -374,22 +379,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  // _makeCheckorUncheck() async {
-  //   var seachFor = searchController.text;
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   setState(() {
-  //     allNotes = prefs.getStringList(sharedMemoryName)?.map((note) {
-  //           return Map<String, String>.from(json.decode(note));
-  //         }).toList() ??
-  //         [];
-
-  //     notes = allNotes
-  //         .where((note) =>
-  //             note['title']!.toLowerCase().contains(seachFor.toLowerCase()))
-  //         .toList();
-  //   });
-  // }
-
 //-------update note----------//
 
   _filterNotes(String query) async {
@@ -408,10 +397,10 @@ class _HomeState extends State<Home> {
   }
 }
 
-AppBar appBar() {
+AppBar appBar(BuildContext context) {
   return AppBar(
     title: const Text(
-      'To Do Lists',
+      'To-Do Lists',
       style: TextStyle(
         color: Color.fromARGB(255, 255, 255, 255),
         fontSize: 18,
@@ -421,6 +410,15 @@ AppBar appBar() {
     backgroundColor: Color.fromARGB(244, 77, 179, 163),
     centerTitle: true,
     automaticallyImplyLeading: false,
+    leading: Builder(
+      builder: (context) => IconButton(
+        icon: const Icon(Icons.menu),
+        onPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
+        color: Colors.white,
+      ),
+    ),
     // actions: [
     //   IconButton(
     //     icon: const Icon(Icons.delete),
@@ -428,5 +426,85 @@ AppBar appBar() {
     //     color: Colors.white,
     //   ),
     // ],
+  );
+}
+
+Drawer buildDrawer(BuildContext context) {
+  return Drawer(
+    child: Column(
+      children: [
+        SizedBox(
+          height: 200.0,
+          width: double.infinity,
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/todo-bg.jpg'),
+                opacity: 0.8,
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  "To Do Lists",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(
+                        255, 14, 78, 104), // Set the desired text color
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(
+          child: Column(
+            children: [
+              ListTile(
+                leading: Icon(Icons.check),
+                title: Text(
+                  "My To-Do's",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+                trailing: Icon(Icons.arrow_right),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Home()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.notes),
+                title: Text(
+                  'My Notes',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+                trailing: Icon(Icons.arrow_right),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MyNotes(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
   );
 }
