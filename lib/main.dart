@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:todoapp1/pages/homepage.dart';
-import 'package:todoapp1/pages/notes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,7 +24,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: MyNotes(),
+      home: Home(),
     );
   }
 

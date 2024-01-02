@@ -2,9 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:todoapp1/pages/add_notes.dart';
+import 'package:todoapp1/pages/edit_note.dart';
 import 'package:todoapp1/pages/edit_todo.dart';
 import 'package:todoapp1/pages/homepage.dart';
 import 'package:todoapp1/pages/notes.dart';
+import 'package:todoapp1/pages/view_notes.dart';
 import 'package:todoapp1/pages/view_todo.dart';
 import 'add_todo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,15 +36,37 @@ class _MyNotesState extends State<MyNotes> {
     _loadNotes();
   }
 
-  void updateNotes() {
+  void updatecallback() {
     _loadNotes();
+  }
+
+  _deleteNote(noteid) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? dataStringList = prefs.getStringList(sharedMemoryName);
+    if (dataStringList != null) {
+      List<String> updatedDataStringList = dataStringList
+          .map((item) => Map<String, String>.from(json.decode(item)))
+          .where((item) => item['id'] != noteid)
+          .map((item) => json.encode(item))
+          .toList();
+      prefs.setStringList(sharedMemoryName, updatedDataStringList);
+      updatecallback();
+      Fluttertoast.showToast(
+        msg: 'Note Deleted',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Color.fromARGB(255, 201, 12, 12),
+        textColor: Colors.white,
+      );
+    }
   }
 
   final List<Color> sequenceColors = [
     Colors.red.shade100,
     Colors.blue.shade100,
     Colors.yellow.shade100,
-    Colors.green.shade100,
+    Colors.green.shade50,
     Colors.pink.shade100,
     Colors.orange.shade100
   ];
@@ -108,7 +132,7 @@ class _MyNotesState extends State<MyNotes> {
             ),
             Expanded(
               child: Container(
-                color: Color.fromARGB(255, 207, 242, 255),
+                color: Colors.green.shade100,
                 child: notes.isEmpty
                     ? Center(
                         child: Text(
@@ -124,38 +148,104 @@ class _MyNotesState extends State<MyNotes> {
                           crossAxisSpacing: 1,
                           itemCount: notes.length,
                           itemBuilder: (context, index) {
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                  left: 3.0, right: 3.0, top: 5.0, bottom: 5.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: getNextColor(index),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.all(10.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        notes[index]['title']!,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12,
+                            return GestureDetector(
+                              onTap: () async {
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ViewNotes(
+                                      id: notes[index]['id']!,
+                                      updateCallback: updatecallback,
+                                    ),
+                                  ),
+                                );
+
+                                if (result == true) {
+                                  _loadNotes();
+                                }
+                              },
+                              onLongPress: () async {
+                                bool deleteConfirmed = await showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    backgroundColor:
+                                        Color.fromARGB(255, 247, 108, 84),
+                                    title: Text('Delete Note?'),
+                                    content: Text(
+                                        'Are you sure you want to delete this Note: ${notes[index]['title']}?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(false),
+                                        child: Text(
+                                          'No',
+                                          selectionColor: Colors.white,
                                         ),
                                       ),
-                                      Text(
-                                        (notes[index]['description']!.length >
-                                                150)
-                                            ? '${notes[index]['description']!.substring(0, 150)}...'
-                                            : notes[index]['description']!,
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                        ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(true),
+                                        child: Text('Yes'),
                                       ),
                                     ],
+                                  ),
+                                );
+
+                                if (deleteConfirmed == true) {
+                                  _deleteNote(notes[index]['id']);
+                                }
+                              },
+                              onDoubleTap: () async {
+                                var result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditNote(
+                                          id: notes[index]['id']!,
+                                          updatecallback: updatecallback),
+                                    ));
+                                if (result) {
+                                  updatecallback();
+                                }
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 3.0,
+                                    right: 3.0,
+                                    top: 5.0,
+                                    bottom: 5.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: getNextColor(index),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(10.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          (notes[index]['title']!.length > 200)
+                                              ? '${notes[index]['title']!.substring(0, 150)}...'
+                                              : notes[index]['title']!,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        Text(
+                                          (notes[index]['description']!.length >
+                                                  150)
+                                              ? '${notes[index]['description']!.substring(0, 150)}...'
+                                              : notes[index]['description']!,
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

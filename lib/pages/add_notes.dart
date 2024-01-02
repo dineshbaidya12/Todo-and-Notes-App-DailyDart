@@ -16,7 +16,7 @@ class _AddNotesNotesState extends State<AddNotesNotes> {
     return Scaffold(
       appBar: appBar(),
       body: Container(
-        color: Color.fromARGB(255, 207, 242, 255),
+        color: Colors.green.shade100,
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

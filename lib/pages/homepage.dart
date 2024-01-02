@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, use_key_in_widget_constructors, prefer_const_constructors, unused_local_variable, unused_import, avoid_unnecessary_containers, use_build_context_synchronously
+// ignore_for_file: library_private_types_in_public_api, use_key_in_widget_constructors, prefer_const_constructors, unused_local_variable, unused_import, avoid_unnecessary_containers, use_build_context_synchronously, non_constant_identifier_names, no_leading_underscores_for_local_identifiers
 
 import 'package:flutter/material.dart';
 import 'package:todoapp1/pages/edit_todo.dart';
@@ -400,7 +400,7 @@ class _HomeState extends State<Home> {
 AppBar appBar(BuildContext context) {
   return AppBar(
     title: const Text(
-      'To-Do Lists',
+      'To-Do',
       style: TextStyle(
         color: Color.fromARGB(255, 255, 255, 255),
         fontSize: 18,

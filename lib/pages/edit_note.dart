@@ -1,33 +1,33 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, use_build_context_synchronously, must_be_immutable
+// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, use_build_context_synchronously
+
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
-class EditTodo extends StatefulWidget {
+class EditNote extends StatefulWidget {
   final String id;
+  final Function updatecallback;
+  EditNote({super.key, required this.id, required this.updatecallback});
 
-  EditTodo({required this.id});
   @override
-  State<EditTodo> createState() => _EditTodoState();
-
-  var index = 0;
+  State<EditNote> createState() => _EditNoteState();
 }
 
-class _EditTodoState extends State<EditTodo> {
+class _EditNoteState extends State<EditNote> {
   List<Map<String, String>> notes = [];
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  var sharedMemoryName = "Todo";
 
+  var sharedMemoryName = 'Notes';
+  var index = 0;
   @override
   void initState() {
     super.initState();
     _loadNotes();
   }
 
-  //loaddata
   _loadNotes() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -37,15 +37,12 @@ class _EditTodoState extends State<EditTodo> {
               .where((note) => note['id'] == widget.id)
               .toList() ??
           [];
+      if (notes.isEmpty) {
+        Navigator.pop(context, true);
+      }
     });
-
-    if (notes.isEmpty) {
-      Navigator.pop(context, true);
-      return;
-    }
-
-    _titleController.text = notes[0]['title']!;
-    _descriptionController.text = notes[0]['description']!;
+    _titleController.text = notes[index]['title']!;
+    _descriptionController.text = notes[index]['description']!;
   }
 
   @override
@@ -53,13 +50,13 @@ class _EditTodoState extends State<EditTodo> {
     return Scaffold(
       appBar: appBar(),
       body: Container(
-        color: Color.fromARGB(255, 255, 240, 179),
+        color: Colors.green.shade100,
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Modify To-Do",
+              "Modify Note",
               style: TextStyle(
                 fontSize: 12.0,
                 fontWeight: FontWeight.bold,
@@ -74,7 +71,7 @@ class _EditTodoState extends State<EditTodo> {
               controller: _titleController,
               decoration: const InputDecoration(
                 border: UnderlineInputBorder(),
-                labelText: 'Your To-Do Title',
+                labelText: 'Your Note Title',
                 labelStyle: TextStyle(
                   fontSize: 12,
                 ),
@@ -120,7 +117,6 @@ class _EditTodoState extends State<EditTodo> {
                             widget.id);
 
                         if (index != -1) {
-                          // Update the note in the list directly
                           Map<String, dynamic> updatedNote =
                               Map<String, dynamic>.from(
                                   json.decode(notesStringList[index]));
@@ -131,14 +127,13 @@ class _EditTodoState extends State<EditTodo> {
                           // Update the list with the modified note
                           notesStringList[index] = json.encode(updatedNote);
 
-                          // Save the updated list to SharedPreferences
                           prefs.setStringList(
                               sharedMemoryName, notesStringList);
 
                           Navigator.pop(context, true);
 
                           Fluttertoast.showToast(
-                            msg: 'To-Do Modified',
+                            msg: 'Notes Modified',
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.BOTTOM,
                             timeInSecForIosWeb: 1,
@@ -149,7 +144,7 @@ class _EditTodoState extends State<EditTodo> {
                       }
                     } else {
                       Fluttertoast.showToast(
-                        msg: 'Please Provide To-Do Title',
+                        msg: 'Please Provide Note Title',
                         toastLength: Toast.LENGTH_SHORT,
                         gravity: ToastGravity.BOTTOM,
                         timeInSecForIosWeb: 1,
@@ -181,14 +176,21 @@ class _EditTodoState extends State<EditTodo> {
 AppBar appBar() {
   return AppBar(
     title: const Text(
-      'Modify To-Do',
+      'Modify Note',
       style: TextStyle(
-        color: Color.fromARGB(255, 70, 70, 70),
+        color: Color.fromARGB(255, 255, 255, 255),
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
     ),
     backgroundColor: Color.fromARGB(244, 77, 179, 163),
     centerTitle: true,
+    // actions: [
+    //   IconButton(
+    //     icon: const Icon(Icons.delete),
+    //     onPressed: () {},
+    //     color: Colors.white,
+    //   ),
+    // ],
   );
 }
