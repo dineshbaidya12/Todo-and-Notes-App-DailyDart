@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'To-Do App',
+      title: 'Daily Dart',
       theme: ThemeData(
         primarySwatch: createMaterialColor(Color.fromARGB(255, 92, 195, 255)),
         textTheme: TextTheme(
